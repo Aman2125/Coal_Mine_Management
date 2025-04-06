@@ -1,322 +1,257 @@
-import React, { useState, useEffect } from 'react';
-import { LineChart, Line, BarChart, Bar, PieChart, Pie, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { Link } from 'react-router-dom'; 
+import React, { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import './Dashboard.css';
+import io from 'socket.io-client';
+import { Line } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+const SOCKET_SERVER_URL = 'http://localhost:9002';
 
 const Dashboard = () => {
-  const [shiftComplianceRate, setShiftComplianceRate] = useState('9%');
-  const [incidentReportRate, setIncidentReportRate] = useState('$1.432');
-  const [safetyExpenses, setSafetyExpenses] = useState([
-    { label: 'Training Costs', value: '$34,566.23' },
-    { label: 'Equipment Maintenance', value: '$45,000.21' },
-  ]);
-  const [incidentLogs, setIncidentLogs] = useState([
-    { label: 'Incident 1', value: 'Resolved' },
-    { label: 'Incident 2', value: 'Pending' },
-  ]);
-  const [announcements, setAnnouncements] = useState([
-    { label: 'Holiday Notice', value: 'Sep 10, 2024' },
-    { label: 'Safety Meeting', value: 'Sep 12, 2024' },
-  ]);
-
-  const [editing, setEditing] = useState({
-    shiftComplianceRate: false,
-    incidentReportRate: false,
-    safetyExpenses: false,
-    incidentLogs: false,
-    announcements: false,
+  const [socket, setSocket] = useState(null);
+  const [notifications, setNotifications] = useState([]);
+  const [documents, setDocuments] = useState([]);
+  const [airQuality, setAirQuality] = useState([]);
+  const [safetyAlerts, setSafetyAlerts] = useState([]);
+  const [stats, setStats] = useState({
+    paperSaved: 0,
+    activeDocuments: 0,
+    safetyScore: 0,
+    alerts: 0
   });
 
-  // Sample data for charts
-  const lineChartData = [
-    { name: 'Jan', value: 400 },
-    { name: 'Feb', value: 300 },
-    { name: 'Mar', value: 600 },
-    { name: 'Apr', value: 800 },
-    { name: 'May', value: 500 },
-  ];
-
-  const barChartData = [
-    { name: 'Mon', value: 20 },
-    { name: 'Tue', value: 30 },
-    { name: 'Wed', value: 25 },
-    { name: 'Thu', value: 40 },
-    { name: 'Fri', value: 35 },
-  ];
-
-  const pieChartData = [
-    { name: 'Training', value: 400 },
-    { name: 'Equipment', value: 300 },
-    { name: 'Safety', value: 300 },
-  ];
-
-  // Function to generate random data
-  const generateRandomData = () => {
-    setShiftComplianceRate(`${Math.floor(Math.random() * 100)}%`);
-    setIncidentReportRate(`$${(Math.random() * 2).toFixed(3)}`);
-  };
-
+  // Socket connection
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      generateRandomData();
-    }, 5000);
+    const newSocket = io(SOCKET_SERVER_URL);
+    setSocket(newSocket);
 
-    return () => clearInterval(intervalId);
+    // Cleanup on unmount
+    return () => newSocket.close();
   }, []);
 
-  const handleEdit = (field) => {
-    setEditing((prev) => ({ ...prev, [field]: true }));
-  };
+  // Socket event handlers
+  useEffect(() => {
+    if (!socket) return;
 
-  const handleSave = (field) => {
-    setEditing((prev) => ({ ...prev, [field]: false }));
-  };
+    // Initial data
+    socket.on('initial-data', (data) => {
+      setAirQuality(data.airQuality);
+      setStats(prev => ({
+        ...prev,
+        safetyScore: data.safetyScore,
+        paperSaved: data.paperSaved,
+        alerts: data.activeAlerts
+      }));
+    });
 
-  const handleChange = (field, e, index = null, subField = null) => {
-    const newValue = e.target.value;
-    if (field === 'shiftComplianceRate') {
-      setShiftComplianceRate(newValue);
-    }
-    if (field === 'incidentReportRate') {
-      setIncidentReportRate(newValue);
-    }
-    if (field === 'expenses') {
-      const updatedExpenses = [...safetyExpenses];
-      if (subField === 'label') {
-        updatedExpenses[index].label = newValue;
-      } else {
-        updatedExpenses[index].value = newValue;
+    // Air quality updates
+    socket.on('air-quality-update', (data) => {
+      setAirQuality(prev => [...prev.slice(-11), data.value]);
+    });
+
+    // Safety score updates
+    socket.on('safety-score-update', (data) => {
+      setStats(prev => ({
+        ...prev,
+        safetyScore: data.score,
+        paperSaved: prev.paperSaved + data.paperSaved
+      }));
+    });
+
+    // New alerts
+    socket.on('new-alert', (alert) => {
+      setNotifications(prev => [alert, ...prev.slice(0, 4)]);
+      if (alert.type === 'safety') {
+        setSafetyAlerts(prev => [alert, ...prev.slice(0, 4)]);
       }
-      setSafetyExpenses(updatedExpenses);
-    }
-    if (field === 'incidentLogs') {
-      const updatedLogs = [...incidentLogs];
-      if (subField === 'label') {
-        updatedLogs[index].label = newValue;
-      } else {
-        updatedLogs[index].value = newValue;
+      setStats(prev => ({
+        ...prev,
+        alerts: prev.alerts + 1
+      }));
+    });
+
+    return () => {
+      socket.off('initial-data');
+      socket.off('air-quality-update');
+      socket.off('safety-score-update');
+      socket.off('new-alert');
+    };
+  }, [socket]);
+
+  // Initial documents data
+  useEffect(() => {
+    setDocuments([
+      { id: 1, title: 'Safety Report', status: 'Updated', time: '2 mins ago' },
+      { id: 2, title: 'Maintenance Log', status: 'Pending', time: '5 mins ago' },
+      { id: 3, title: 'Inspection Record', status: 'Completed', time: '10 mins ago' }
+    ]);
+  }, []);
+
+  const chartData = {
+    labels: Array(12).fill('').map((_, i) => `${12 - i}m ago`),
+    datasets: [
+      {
+        label: 'Air Quality Index',
+        data: airQuality,
+        fill: false,
+        borderColor: 'rgb(75, 192, 192)',
+        tension: 0.4
       }
-      setIncidentLogs(updatedLogs);
-    }
-    if (field === 'announcements') {
-      const updatedAnnouncements = [...announcements];
-      if (subField === 'label') {
-        updatedAnnouncements[index].label = newValue;
-      } else {
-        updatedAnnouncements[index].value = newValue;
+    ]
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Real-time Air Quality Monitoring'
       }
-      setAnnouncements(updatedAnnouncements);
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 100
+      }
     }
   };
 
-  const addExpense = () => {
-    setSafetyExpenses([...safetyExpenses, { label: 'New Expense', value: '' }]);
-    setEditing((prev) => ({ ...prev, safetyExpenses: true }));
-  };
-
-  const deleteExpense = (index) => {
-    setSafetyExpenses(safetyExpenses.filter((_, i) => i !== index));
-  };
-
-  const addIncidentLog = () => {
-    setIncidentLogs([...incidentLogs, { label: 'New Incident', value: '' }]);
-    setEditing((prev) => ({ ...prev, incidentLogs: true }));
-  };
-
-  const deleteIncidentLog = (index) => {
-    setIncidentLogs(incidentLogs.filter((_, i) => i !== index));
-  };
-
-  const addAnnouncement = () => {
-    setAnnouncements([...announcements, { label: 'New Announcement', value: '' }]);
-    setEditing((prev) => ({ ...prev, announcements: true }));
-  };
-
-  const deleteAnnouncement = (index) => {
-    setAnnouncements(announcements.filter((_, i) => i !== index));
-  };
+  const handleAlertAction = useCallback((alertId) => {
+    setSafetyAlerts(prev => 
+      prev.filter(alert => alert.id !== alertId)
+    );
+    setStats(prev => ({
+      ...prev,
+      alerts: Math.max(0, prev.alerts - 1)
+    }));
+  }, []);
 
   return (
     <div className="dashboard-container">
-      <aside className="sidebar">
-        <ul>
-          <li>
-            <Link to="/">Home</Link> 
-          </li>
-          <li>
-            <Link to="/dashboard">Safety Dashboard</Link> 
-          </li>
-          <li>
-            <Link to="/attendance-logbook">Attendance Logbook</Link> 
-          </li>
-          <li>
-            <Link to="/safety-guidelines">Safety Guidelines</Link> 
-          </li>
-          <li>
-            <Link to="/faq">FAQ</Link> 
-          </li>
-        </ul>
-      </aside>
-      <main className="main-content">
-        <section className="safety-dashboard">
-          <div className="dashboard-overview">
-            <div className="overview-item">
-              <h3>Shift Compliance Rate</h3>
-              <input
-                type="text"
-                value={shiftComplianceRate}
-                onChange={(e) => handleChange('shiftComplianceRate', e)}
-                disabled={!editing.shiftComplianceRate}
-                className="editable-field"
-              />
-              {!editing.shiftComplianceRate && (
-                <button onClick={() => handleEdit('shiftComplianceRate')}>Edit</button>
-              )}
-              {editing.shiftComplianceRate && (
-                <button onClick={() => handleSave('shiftComplianceRate')}>Save</button>
-              )}
-            </div>
-            <div className="overview-item">
-              <h3>Incident Report Rate</h3>
-              <input
-                type="text"
-                value={incidentReportRate}
-                onChange={(e) => handleChange('incidentReportRate', e)}
-                disabled={!editing.incidentReportRate}
-                className="editable-field"
-              />
-              {!editing.incidentReportRate && (
-                <button onClick={() => handleEdit('incidentReportRate')}>Edit</button>
-              )}
-              {editing.incidentReportRate && (
-                <button onClick={() => handleSave('incidentReportRate')}>Save</button>
-              )}
-            </div>
+      <div className="dashboard-header">
+        <div className="header-content">
+          <h1>Mine Operations Dashboard</h1>
+          <div className="real-time-indicator">
+            <span className="pulse"></span>
+            Live Updates
           </div>
-
-          <div className="chart-container">
-            <div className="chart-item">
-              <h3>Line Chart - Incident Reports</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={lineChartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="value" stroke="#8884d8" />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="chart-item">
-              <h3>Bar Chart - Daily Safety Scores</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={barChartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="value" fill="#82ca9d" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="chart-item">
-              <h3>Pie Chart - Resource Allocation</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={pieChartData}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={80}
-                    fill="#8884d8"
-                    label
-                  />
-                  <Tooltip />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
+        </div>
+        <div className="quick-stats">
+          <div className="stat-card">
+            <h3>Safety Score</h3>
+            <div className="stat-value">{stats.safetyScore}%</div>
           </div>
-        </section>
+          <div className="stat-card">
+            <h3>Paper Saved</h3>
+            <div className="stat-value">{stats.paperSaved} sheets</div>
+          </div>
+          <div className="stat-card">
+            <h3>Active Alerts</h3>
+            <div className="stat-value">{stats.alerts}</div>
+          </div>
+        </div>
+      </div>
 
-        <section className="safety-expenses">
-          <h3>Safety Expenses</h3>
-          {safetyExpenses.map((expense, index) => (
-            <div key={index} className="expense-item">
-              <input
-                type="text"
-                value={expense.label}
-                onChange={(e) => handleChange('expenses', e, index, 'label')}
-                disabled={!editing.safetyExpenses}
-                placeholder="Expense Label"
-              />
-              <input
-                type="text"
-                value={expense.value}
-                onChange={(e) => handleChange('expenses', e, index, 'value')}
-                disabled={!editing.safetyExpenses}
-                placeholder="Expense Value"
-              />
-              <button onClick={() => deleteExpense(index)}>Delete</button>
-            </div>
-          ))}
-          <button className="add-button" onClick={addExpense}>Add Expense</button>
-        </section>
+      <div className="dashboard-grid">
+        <div className="grid-item chart-container">
+          <Line data={chartData} options={chartOptions} />
+        </div>
 
-        {/* Incident Log Section */}
-        <section className="incident-logs">
-          <h3>Incident Logs</h3>
-          {incidentLogs.map((log, index) => (
-            <div key={index} className="incident-item">
-              <input
-                type="text"
-                value={log.label}
-                onChange={(e) => handleChange('incidentLogs', e, index, 'label')}
-                disabled={!editing.incidentLogs}
-                placeholder="Incident Label"
-              />
-              <input
-                type="text"
-                value={log.value}
-                onChange={(e) => handleChange('incidentLogs', e, index, 'value')}
-                disabled={!editing.incidentLogs}
-                placeholder="Incident Status"
-              />
-              <button onClick={() => deleteIncidentLog(index)}>Delete</button>
-            </div>
-          ))}
-          <button className="add-button" onClick={addIncidentLog}>Add Incident Log</button>
-        </section>
+        <div className="grid-item notifications-panel">
+          <h2>Live Notifications</h2>
+          <div className="notification-list">
+            {notifications.map(notification => (
+              <div key={notification.id} className={`notification-item ${notification.type}`}>
+                <div className="notification-content">
+                  <p>{notification.message}</p>
+                  <span className="timestamp">
+                    {new Date(notification.timestamp).toLocaleTimeString()}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
-        {/* Announcements Section */}
-        <section className="announcements">
-          <h3>Announcements</h3>
-          {announcements.map((announcement, index) => (
-            <div key={index} className="announcement-item">
-              <input
-                type="text"
-                value={announcement.label}
-                onChange={(e) => handleChange('announcements', e, index, 'label')}
-                disabled={!editing.announcements}
-                placeholder="Announcement Title"
-              />
-              <input
-                type="text"
-                value={announcement.value}
-                onChange={(e) => handleChange('announcements', e, index, 'value')}
-                disabled={!editing.announcements}
-                placeholder="Announcement Date"
-              />
-              <button onClick={() => deleteAnnouncement(index)}>Delete</button>
-            </div>
-          ))}
-          <button className="add-button" onClick={addAnnouncement}>Add Announcement</button>
-        </section>
-      </main>
+        <div className="grid-item documents-panel">
+          <h2>Recent Documents</h2>
+          <div className="document-list">
+            {documents.map(doc => (
+              <div key={doc.id} className="document-item">
+                <div className="doc-info">
+                  <h3>{doc.title}</h3>
+                  <span className={`status ${doc.status.toLowerCase()}`}>
+                    {doc.status}
+                  </span>
+                </div>
+                <span className="doc-time">{doc.time}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid-item alerts-panel">
+          <h2>Safety Alerts</h2>
+          <div className="alerts-list">
+            {safetyAlerts.map(alert => (
+              <div key={alert.id} className={`alert-item ${alert.level}`}>
+                <div className="alert-icon">⚠️</div>
+                <div className="alert-content">
+                  <p>{alert.message}</p>
+                  <button 
+                    className="action-btn"
+                    onClick={() => handleAlertAction(alert.id)}
+                  >
+                    Take Action
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="quick-actions-panel">
+        <Link to="/digital-documents" className="action-link">
+          <span className="icon">📄</span>
+          Documents
+        </Link>
+        <Link to="/safety-alerts" className="action-link">
+          <span className="icon">🚨</span>
+          Alerts
+        </Link>
+        <Link to="/attendance-logbook" className="action-link">
+          <span className="icon">📋</span>
+          Attendance
+        </Link>
+        <Link to="/operational-metrics" className="action-link">
+          <span className="icon">📊</span>
+          Metrics
+        </Link>
+      </div>
     </div>
   );
 };

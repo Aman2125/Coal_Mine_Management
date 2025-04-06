@@ -3,10 +3,20 @@ import cors from "cors";
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken"; // Optionally for token-based authentication
+import { createServer } from "http";
+import { Server } from "socket.io";
 
 const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"]
+  }
+});
+
 const saltRounds = 10;
-const secretKey = "your_jwt_secret"; // Replace with your actual secret key
+const secretKey = "qTYscBcyBGHghCkB/OZv93rDJRYgByojST2rT5XvLYM="; // Replace with your actual secret key
 
 // Middleware
 app.use(express.json());
@@ -34,6 +44,58 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
 });
 const User = mongoose.model("User", userSchema);
+
+// Mock data generators
+const generateAirQuality = () => Math.floor(Math.random() * 50) + 50;
+const generateSafetyScore = () => Math.floor(Math.random() * 20) + 80;
+
+// Socket.IO Handlers
+io.on('connection', (socket) => {
+  console.log('Client connected');
+
+  // Send initial data
+  socket.emit('initial-data', {
+    airQuality: Array(12).fill(0).map(() => generateAirQuality()),
+    safetyScore: generateSafetyScore(),
+    paperSaved: Math.floor(Math.random() * 1000),
+    activeAlerts: Math.floor(Math.random() * 5)
+  });
+
+  // Air quality updates
+  setInterval(() => {
+    socket.emit('air-quality-update', {
+      value: generateAirQuality(),
+      timestamp: new Date().toISOString()
+    });
+  }, 5000);
+
+  // Safety score updates
+  setInterval(() => {
+    socket.emit('safety-score-update', {
+      score: generateSafetyScore(),
+      paperSaved: Math.floor(Math.random() * 5),
+      timestamp: new Date().toISOString()
+    });
+  }, 8000);
+
+  // Random alerts
+  setInterval(() => {
+    const alertTypes = ['safety', 'maintenance', 'environmental'];
+    const alertType = alertTypes[Math.floor(Math.random() * alertTypes.length)];
+    const alert = {
+      id: Date.now(),
+      type: alertType,
+      message: `New ${alertType} alert: ${new Date().toLocaleTimeString()}`,
+      level: Math.random() > 0.5 ? 'high' : 'medium',
+      timestamp: new Date().toISOString()
+    };
+    socket.emit('new-alert', alert);
+  }, 12000);
+
+  socket.on('disconnect', () => {
+    console.log('Client disconnected');
+  });
+});
 
 // Routes
 
@@ -104,10 +166,7 @@ app.get("/api/protected", (req, res) => {
   }
 });
 
-
-
-
 // Start the server
-app.listen(9002, () => {
+httpServer.listen(9002, () => {
   console.log("Server started at port 9002");
 });

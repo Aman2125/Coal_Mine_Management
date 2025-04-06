@@ -9,12 +9,13 @@ import Guideline2Page from './pages/Guideline2Page.js';
 import Guideline3Page from './pages/Guideline3Page';
 import LeaveApplicationForm from './pages/LeaveApplicationForm';
 
-import OperationalMetricsPage from './pages/OperationalMetricsPage'; // Newly added
-import SafetyAlertsPage from './pages/SafetyAlertsPage'; // Newly added
-import ComplianceStatusPage from './pages/ComplianceStatusPage'; // Newly added
-import DGMSGuidelinesPage from './pages/DGMSGuidelinesPage'; // Newly added
+import OperationalMetricsPage from './pages/OperationalMetricsPage';
+import SafetyAlertsPage from './pages/SafetyAlertsPage';
+import ComplianceStatusPage from './pages/ComplianceStatusPage';
+import DGMSGuidelinesPage from './pages/DGMSGuidelinesPage';
 import TrackComplaintPage from './pages/TrackComplaintPage';
 import HomePage from './pages/HomePage';
+import DigitalDocuments from './pages/DigitalDocuments';
 
 // Page Components
 import FrontPage from './pages/FrontPage';
@@ -27,13 +28,11 @@ import AttendanceLogbookPage from './pages/AttendanceLogbookPage.js';
 import MachineryMaintenance from './pages/MachineryMaintenance.js';
 import ProfileAccessPage from './pages/ProfileAccessPage';
 import Dashboard from './pages/Dashboard';
-import NewRegistrationPage from './pages/NewRegistrationPage'; // Import the new page
+import NewRegistrationPage from './pages/NewRegistrationPage';
 import ClaimReportPage from './pages/ClaimReportPage';
 import FAQ from './pages/FAQ.js';
 import ProfilePage from './pages/ProfilePage.js';
-
-// Import the FrontPageLogOut component
-import FrontPageLogOut from './pages/FrontPageLogOut'; 
+import FrontPageLogOut from './pages/FrontPageLogOut';
 
 function App() {
   const [dateDetails, setDateDetails] = useState({});
@@ -45,7 +44,7 @@ function App() {
 
   const handleSaveDetails = (date, updatedDetails) => {
     setDateDetails({ ...dateDetails, [date]: updatedDetails });
-    setSelectedDate(null); // Close the modal after saving
+    setSelectedDate(null);
   };
 
   const handleClose = () => {
@@ -62,8 +61,8 @@ function App() {
             <Calendar
               onDateClick={handleDateClick}
               dateDetails={dateDetails}
-              year={new Date().getFullYear()} // replace with selected year
-              month={new Date().getMonth() + 1} // replace with selected month
+              year={new Date().getFullYear()}
+              month={new Date().getMonth() + 1}
             />
           }
         />
@@ -81,6 +80,7 @@ function App() {
         <Route path="/MachineryMaintenance" element={<MachineryMaintenance />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/new-registration" element={<NewRegistrationPage />} />
+        <Route path="/digital-documents" element={<DigitalDocuments />} />
 
         {/* Newly added routes */}
         <Route path="/leave-application" element={<LeaveApplicationForm />} />
@@ -95,8 +95,6 @@ function App() {
         <Route path="/guideline2" element={<Guideline2Page />} />
         <Route path="/guideline3" element={<Guideline3Page />} />
         <Route path="/profile-page" element={<ProfilePage />} />
-
-        {/* FrontPageLogOut Route */}
         <Route path="/frontpage-logout" element={<FrontPageLogOut />} />
       </Routes>
 
