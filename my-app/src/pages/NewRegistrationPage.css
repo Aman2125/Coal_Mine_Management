@@ -1,0 +1,133 @@
+/* Container for the form */
+form {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  /* General style for all form labels */
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    font-size: 14px;
+    color: #4a4a4a;
+    text-transform: uppercase;
+  }
+  
+  /* General style for all inputs, selects, and textarea */
+  input[type="text"],
+  input[type="password"],
+  input[type="email"],
+  select {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #f9f9f9;
+    color: #333;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+  }
+  
+  /* Style for read-only fields */
+  input[readonly] {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+  }
+  
+  /* Captcha input style */
+  input[type="text"][name="captcha"] {
+    width: 60%;
+    display: inline-block;
+    margin-right: 1rem;
+  }
+  
+  /* Input focus style */
+  input:focus,
+  select:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  
+  /* General style for the submit button */
+  button[type="submit"] {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  button[type="submit"]:hover {
+    background-color: #0056b3;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Style for the title of the form */
+  h1 {
+    text-align: center;
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 2rem;
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  /* Add some spacing to the form sections */
+  form div {
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Add animation to the form container */
+  form {
+    animation: fadeIn 1s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Style the small instructional text */
+  small {
+    display: block;
+    margin-top: -1rem;
+    margin-bottom: 1.5rem;
+    color: #666;
+    font-size: 12px;
+  }
+  
+  /* Ensuring that the form is responsive */
+  @media (max-width: 600px) {
+    form {
+      padding: 1.5rem;
+    }
+  
+    input[type="text"][name="captcha"] {
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+  
+    button[type="submit"] {
+      font-size: 14px;
+    }
+  }
+  

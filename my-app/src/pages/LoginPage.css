@@ -1,0 +1,239 @@
+/* Container for login page with responsive max-width */
+.login-container {
+  max-width: 100%;
+  width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f7f7f7;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  margin-bottom: 5px;
+  display: block;
+  color: #333;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  outline: none;
+}
+
+.form-group input:focus {
+  border-color: #007bff;
+}
+
+.btn {
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+  transition: background-color 0.3s;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+
+.signup-text {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.signup-text a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.signup-text a:hover {
+  text-decoration: underline;
+}
+
+/* Full-screen background container */
+.background-container {
+  background: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url('background.jpeg');
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px; /* Padding for better layout on smaller screens */
+}
+
+/* Login form container with white background */
+.login-container {
+  background-color: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 450px; /* Max-width for responsive sizing */
+  text-align: center;
+}
+
+/* Branding styles with Ashoka emblem */
+.branding {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.branding-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ashoka-logo {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+.branding h2 {
+  font-size: 24px;
+  color: #333;
+  margin: 0;
+}
+
+.branding h3 {
+  font-size: 20px;
+  color: #444;
+}
+
+.branding h4 {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+/* Form styles */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+/* Button styles */
+.btn {
+  background-color: #c0392b;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.btn:hover {
+  background-color: #a93226;
+}
+
+/* Footer styles */
+.footer {
+  margin-top: 20px;
+  font-size: 12px;
+}
+
+.footer-logo {
+  margin-top: 10px;
+  height: 30px;
+}
+
+/* Media queries for responsiveness */
+
+/* For tablets and smaller devices */
+@media (max-width: 768px) {
+  .login-container {
+    max-width: 90%;
+    padding: 30px;
+  }
+
+  .branding h2 {
+    font-size: 22px;
+  }
+
+  .branding h3 {
+    font-size: 18px;
+  }
+
+  .branding h4 {
+    font-size: 14px;
+  }
+
+  .form-group input {
+    font-size: 14px;
+  }
+
+  .btn {
+    font-size: 14px;
+  }
+}
+
+/* For mobile devices */
+@media (max-width: 480px) {
+  .login-container {
+    max-width: 100%;
+    padding: 20px;
+  }
+
+  .branding h2 {
+    font-size: 20px;
+  }
+
+  .branding h3 {
+    font-size: 16px;
+  }
+
+  .branding h4 {
+    font-size: 12px;
+  }
+
+  .ashoka-logo {
+    width: 30px;
+    height: 30px;
+  }
+
+  .form-group input {
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  .btn {
+    padding: 10px;
+    font-size: 14px;
+  }
+}

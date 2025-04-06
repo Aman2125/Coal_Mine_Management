@@ -1,0 +1,13 @@
+.guideline-detail-page {
+    padding: 20px;
+}
+
+.guideline-detail-page h1 {
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+.guideline-detail-page p {
+    font-size: 18px;
+    line-height: 1.6;
+}

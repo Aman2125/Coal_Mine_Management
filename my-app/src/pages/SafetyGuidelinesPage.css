@@ -1,0 +1,172 @@
+/* General Styling */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f7f7f7;
+}
+
+.safety-guidelines-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: relative; /* Needed for positioning the toggle button */
+}
+
+/* Header Styling */
+.header {
+  background-color: #007BFF; /* Blue color */
+  color: white;
+  padding: 15px;
+  text-align: center;
+  border-radius: 5px;
+  position: relative; /* Needed for positioning the toggle button */
+}
+
+.header-title {
+  margin: 0;
+  font-size: 2em;
+}
+
+.language-toggle-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background-color: #0056b3;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.language-toggle-button:hover {
+  background-color: #004085;
+}
+
+/* Back Button Styling */
+.back-button {
+  background-color: #007BFF; /* Blue color */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin: 20px 0;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.back-button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Section Titles */
+.section-title {
+  font-size: 1.8em;
+  color: #333;
+  margin-top: 20px;
+  border-bottom: 2px solid #007BFF; /* Blue underline */
+  padding-bottom: 10px;
+}
+
+/* Dashboard Section */
+.dashboard-section, .smp-guidelines-section, .emergency-contact-section {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.dashboard-item {
+  flex: 1 1 200px;
+  background-color: #e3f2fd; /* Light blue */
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-item h3 {
+  margin-top: 0;
+  font-size: 1.5em;
+}
+
+/* SMP Guidelines Section */
+.smp-content h3 {
+  margin-top: 0;
+  font-size: 1.5em;
+  color: #007BFF; /* Blue color */
+}
+
+.smp-content ul {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+
+.smp-content ul li {
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+
+/* Emergency Contact Section */
+.emergency-contact-section {
+  margin-top: 30px;
+}
+
+.add-contact-button, .edit-button, .delete-button, .save-button {
+  background-color: #007BFF; /* Blue color */
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  margin-top: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.add-contact-button:hover,
+.edit-button:hover,
+.delete-button:hover,
+.save-button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+.contact-list {
+  margin-top: 20px;
+}
+
+.contact-info, .new-contact-form {
+  background-color: #f1f1f1;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.contact-input {
+  width: calc(100% - 22px);
+  padding: 8px;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Footer Styling */
+.footer {
+  text-align: center;
+  padding: 20px;
+  margin-top: 30px;
+  background-color: #f1f1f1;
+  border-top: 2px solid #007BFF; /* Blue border */
+}
+
+.footer p {
+  margin: 0;
+  color: #555;
+}

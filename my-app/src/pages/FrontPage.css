@@ -1,0 +1,245 @@
+/* slick-carousel CSS */
+@import '~slick-carousel/slick/slick.css';
+@import '~slick-carousel/slick/slick-theme.css';
+
+/* General Styles for Front Page */
+.frontpage-container {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background-image: url('./background1.jpg'); /* Path to your image */
+  background-size: cover; /* Ensure the image covers the entire container */
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Prevent image repetition */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+/* Ministry of Coal logo and title */
+.top-header {
+  background-color: #00529b; /* Dark blue background */
+  color: #fff;
+  width: 100%;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+}
+
+.header-logo {
+  width: 60px;
+  height: 60px;
+  margin-right: 20px;
+  border-radius: 50%;
+}
+
+.header-text h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.header-text p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Navigation Bar Styles */
+.main-nav {
+  width: 100%;
+  background-color: #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  color: white;
+}
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.hamburger .bar {
+  width: 25px;
+  height: 3px;
+  background-color: white;
+  margin: 4px;
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+}
+
+.nav-links li {
+  margin: 0 15px;
+}
+
+.nav-links li a {
+  color: white;
+  text-decoration: none;
+}
+
+.nav-links.open {
+  display: block;
+}
+
+/* Slider Styles */
+/* Slider Styles */
+.image-slider {
+  width: 100%; /* Full width of the page */
+  margin: 30px auto;
+  padding: 0 10px; /* Add padding to prevent images from touching the edges */
+  box-sizing: border-box; /* Include padding in the width */
+}
+
+.slider-image {
+  width: 100%;
+  height: auto; /* Automatically adjust height to maintain aspect ratio */
+  max-height: 400px; /* Limit the maximum height */
+  object-fit: cover; /* Ensures the image covers the slider area while maintaining aspect ratio */
+  border-radius: 10px;
+}
+
+/* Responsive Styles for Slider */
+@media (max-width: 768px) {
+  .slider-image {
+    max-height: 300px; /* Reduce maximum height on smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .slider-image {
+    max-height: 200px; /* Further reduce maximum height on very small screens */
+  }
+}
+
+
+/* Two-Column Container */
+.two-column-container {
+  display: flex;
+  flex-wrap: wrap; /* Allows the cards to wrap onto the next line if necessary */
+  justify-content: space-between;
+  width: 80%;
+  margin: 30px auto;
+}
+
+.left-column, .right-column {
+  width: 48%; /* Width of each column */
+}
+
+.mission-vision-container {
+  margin-bottom: 30px;
+}
+
+/* Quick Links */
+.quick-links-list {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.quick-links-list li {
+  margin-bottom: 10px;
+}
+
+.quick-links-list a {
+  text-decoration: none;
+  color: #00529b;
+}
+
+.quick-links-list a:hover {
+  text-decoration: underline;
+}
+
+/* Cards */
+.card-container {
+  display: flex;
+  flex-wrap: wrap; /* Allows the cards to wrap onto the next line if necessary */
+  gap: 20px;
+  width: 100%; /* Ensures the container spans the full width */
+}
+
+.card {
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  padding: 20px;
+  width: calc(50% - 20px); /* Two cards in a row with spacing */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+}
+
+.card-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.text-content {
+  margin-right: 20px;
+}
+
+.card-link {
+  text-decoration: none;
+  color: #00529b;
+}
+
+.card-icon {
+  font-size: 40px;
+  color: #00529b;
+}
+
+/* Footer Styles */
+.footer {
+  background-color: #333;
+  color: white;
+  padding: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: center; /* Center the content horizontally */
+}
+
+/* Ensure the footer sticks to the bottom of the page */
+.footer-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content {
+  flex: 1; /* Takes up all available space, pushing the footer to the bottom */
+}
+
+.footer-links a {
+  color: white;
+  text-decoration: none;
+  margin-right: 15px;
+}
+
+.footer-info p {
+  margin: 5px 0;
+}
+
+@media screen and (max-width: 768px) {
+  .hamburger {
+    display: flex;
+  }
+  .nav-links {
+    display: none;
+    flex-direction: column;
+  }
+  .nav-links.open {
+    display: flex;
+  }
+  .two-column-container {
+    flex-direction: column;
+    width: 100%;
+  }
+  .left-column, .right-column {
+    width: 100%;
+  }
+}

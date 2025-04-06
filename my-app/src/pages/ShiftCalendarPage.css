@@ -1,0 +1,19 @@
+/* src/pages/ShiftCalendarPage.css */
+.shift-calendar-page {
+    padding: 20px;
+  }
+  
+  .shift-details {
+    margin-top: 20px;
+  }
+  
+  .shift-details textarea {
+    width: 100%;
+    height: 100px;
+    margin-bottom: 10px;
+  }
+  
+  .shift-details button {
+    margin-top: 10px;
+  }
+  

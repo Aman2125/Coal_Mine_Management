@@ -1,0 +1,96 @@
+/* SafetyAlertsPage.css */
+
+.safety-alerts-container {
+    padding: 20px;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .add-alert-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+  }
+  
+  .add-alert-form {
+    margin: 20px 0;
+  }
+  
+  .add-alert-form label {
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  .add-alert-form input,
+  .add-alert-form textarea,
+  .add-alert-form select {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+  }
+  
+  .add-alert-form button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+  }
+  
+  .add-alert-form button.cancel {
+    background-color: #f44336;
+  }
+  
+  .alerts-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .alert-item {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+  }
+  
+  .alert-item.critical {
+    border-color: red;
+  }
+  
+  .alert-item.high {
+    border-color: orange;
+  }
+  
+  .alert-item.medium {
+    border-color: yellow;
+  }
+  
+  .alert-item.low {
+    border-color: green;
+  }
+  
+  .resolve-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    text-align: center;
+    cursor: pointer;
+  }
+  
