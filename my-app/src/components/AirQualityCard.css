@@ -7,7 +7,11 @@
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  width: 33.33%;
+  float: left;
+  margin-right: 1.5rem; /* space between cards */
 }
+
 
 .card-header {
   display: flex;
