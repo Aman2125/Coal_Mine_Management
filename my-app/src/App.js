@@ -22,7 +22,6 @@ import FrontPage from './pages/FrontPage';
 import LoginPage from './pages/LoginPage';
 import SafetyGuidelinesPage from './pages/SafetyGuidelinesPage';
 import Alert from './pages/Alert.js';
-import AirQualityAlert from './pages/AirQualityAlert';
 import MonthYearSelector from './pages/MonthYearSelector';
 import AttendanceLogbookPage from './pages/AttendanceLogbookPage.js';
 import MachineryMaintenance from './pages/MachineryMaintenance.js';
@@ -72,7 +71,6 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/safety-guidelines" element={<SafetyGuidelinesPage />} />
         <Route path="/alert" element={<Alert />} />
-        <Route path="/air-quality" element={<AirQualityAlert />} />
         <Route path="/MonthYearSelector" element={<MonthYearSelector />} />
         <Route path="/attendance-logbook" element={<AttendanceLogbookPage />} />
         <Route path="/profile-access" element={<ProfileAccessPage />} />

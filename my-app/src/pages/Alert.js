@@ -2,6 +2,8 @@ import React, { useEffect, useState, useCallback } from "react";
 import { FaSearch, FaExclamationTriangle, FaHistory, FaThermometerHalf, FaMapMarkerAlt } from "react-icons/fa";
 import { WiThunderstorm, WiEarthquake, WiHumidity, WiStrongWind, WiDust } from "react-icons/wi";
 import { GiEarthCrack, GiMining } from "react-icons/gi";
+import WeatherCard from "../components/WeatherCard";
+import AirQualityCard from "../components/AirQualityCard";
 import "./Alert.css";
 
 const API_KEY = "ee59cf9309d065963dc102cfceb15d9d";
@@ -35,6 +37,7 @@ const Alert = () => {
   const [location, setLocation] = useState("Jharkhand");
   const [weatherAlerts, setWeatherAlerts] = useState([]);
   const [seismicAlerts, setSeismicAlerts] = useState([]);
+  const [airQualityData, setAirQualityData] = useState(null);
   const [suggestions, setSuggestions] = useState([]);
   const [activeTab, setActiveTab] = useState("weather");
   const [seismicFilter, setSeismicFilter] = useState("all");
@@ -72,11 +75,12 @@ const Alert = () => {
 
   // Fetch weather data when location changes
   useEffect(() => {
-    const fetchWeatherAlerts = async () => {
-      if (!location) return; // Don't fetch if location is empty
+    const fetchWeatherAndAirQuality = async () => {
+      if (!location) return;
       
       setLoading(prev => ({ ...prev, weather: true }));
       try {
+        // Fetch weather data
         const weatherResponse = await fetch(
           `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${API_KEY}&units=metric`
         );
@@ -98,7 +102,9 @@ const Alert = () => {
             humidity: `${weatherData.main.humidity}%`,
             wind: `${Math.round(weatherData.wind.speed)} m/s`,
             pressure: `${weatherData.main.pressure} hPa`,
-            region: weatherData.sys.country === "IN" ? "India" : "International"
+            region: weatherData.sys.country === "IN" ? "India" : "International",
+            lat: weatherData.coord.lat,
+            lon: weatherData.coord.lon
           },
           level: getWeatherAlertLevel(weatherData.main.temp, weatherData.wind.speed),
           timestamp: new Date().toISOString(),
@@ -107,16 +113,40 @@ const Alert = () => {
         }));
 
         setWeatherAlerts(alerts);
+
+        // Fetch air quality data
+        const { lat, lon } = weatherData.coord;
+        const airQualityResponse = await fetch(
+          `https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${API_KEY}`
+        );
+        const airQualityData = await airQualityResponse.json();
+
+        if (airQualityData.list && airQualityData.list.length > 0) {
+          const aqiData = airQualityData.list[0];
+          setAirQualityData({
+            aqi: aqiData.main.aqi,
+            components: {
+              pm2_5: aqiData.components.pm2_5,
+              pm10: aqiData.components.pm10,
+              no2: aqiData.components.no2,
+              so2: aqiData.components.so2,
+              co: aqiData.components.co
+            },
+            location: weatherData.name,
+            timestamp: new Date(aqiData.dt * 1000).toISOString()
+          });
+        }
       } catch (error) {
-        console.error("Error fetching weather alerts:", error);
+        console.error("Error fetching data:", error);
         setWeatherAlerts([]);
+        setAirQualityData(null);
       } finally {
         setLoading(prev => ({ ...prev, weather: false }));
       }
     };
 
-    fetchWeatherAlerts();
-    const intervalId = setInterval(fetchWeatherAlerts, 300000);
+    fetchWeatherAndAirQuality();
+    const intervalId = setInterval(fetchWeatherAndAirQuality, 300000);
     return () => clearInterval(intervalId);
   }, [location]);
 
@@ -318,8 +348,26 @@ const Alert = () => {
     }
   };
 
+  // Helper function to get AQI status and color
+  const getAqiInfo = (aqi) => {
+    switch (aqi) {
+      case 1:
+        return { status: 'Good', color: '#00C853', textColor: '#004D1F' };
+      case 2:
+        return { status: 'Fair', color: '#FFD600', textColor: '#4D4000' };
+      case 3:
+        return { status: 'Moderate', color: '#FF9100', textColor: '#4D2B00' };
+      case 4:
+        return { status: 'Poor', color: '#FF3D00', textColor: '#4D1200' };
+      case 5:
+        return { status: 'Very Poor', color: '#D50000', textColor: '#400000' };
+      default:
+        return { status: 'Unknown', color: '#9E9E9E', textColor: '#2F2F2F' };
+    }
+  };
+
   return (
-    <div className="alert-dashboard">
+    <div className="alert-page">
       <div className="dashboard-header">
         <h1>Coal Mine Emergency Alert System</h1>
       </div>
@@ -330,21 +378,14 @@ const Alert = () => {
           onClick={() => setActiveTab('weather')}
         >
           <WiThunderstorm />
-          Weather Alerts
+          Weather
         </button>
         <button
           className={`tab-btn ${activeTab === 'seismic' ? 'active' : ''}`}
           onClick={() => setActiveTab('seismic')}
         >
-          <GiEarthCrack />
-          Seismic Alerts
-        </button>
-        <button
-          className={`tab-btn ${activeTab === 'air-quality' ? 'active' : ''}`}
-          onClick={() => window.location.href = '/air-quality'}
-        >
-          <WiDust />
-          Air Quality
+          <WiEarthquake />
+          Seismic
         </button>
       </div>
 
@@ -446,17 +487,32 @@ const Alert = () => {
 
       <div className="alerts-container">
         {activeTab === 'weather' && (
-          <div className="weather-alerts">
-            {loading.weather ? (
-              <div className="loading">Loading weather data...</div>
-            ) : weatherAlerts.length > 0 ? (
-              weatherAlerts.map(alert => (
-                <AlertCard key={alert.id} alert={alert} />
-              ))
-            ) : (
-              <div className="no-alerts">No weather alerts available</div>
+          <>
+            {weatherAlerts.map((alert) => (
+              <WeatherCard
+                key={alert.id}
+                weatherData={{
+                  description: alert.message,
+                  location: location,
+                  temperature: alert.details.temperature.replace('°C', ''),
+                  feelsLike: alert.details["feels like"].replace('°C', ''),
+                  humidity: alert.details.humidity.replace('%', ''),
+                  wind: alert.details.wind.replace(' m/s', ''),
+                  pressure: alert.details.pressure.replace(' hPa', ''),
+                  region: alert.details.region
+                }}
+              />
+            ))}
+            {weatherAlerts.length > 0 && weatherAlerts[0].details && (
+              <AirQualityCard 
+                location={{
+                  lat: weatherAlerts[0].details.lat || 22.06,
+                  lon: weatherAlerts[0].details.lon || 82.15,
+                  name: location
+                }} 
+              />
             )}
-          </div>
+          </>
         )}
 
         {activeTab === 'seismic' && (

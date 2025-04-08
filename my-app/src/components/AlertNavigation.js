@@ -1,6 +1,6 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { WiThunderstorm, WiDust } from 'react-icons/wi';
+import { Link as NavLink, useLocation } from 'react-router-dom';
+import { FaExclamationTriangle } from 'react-icons/fa';
 import './AlertNavigation.css';
 
 const AlertNavigation = () => {
@@ -8,20 +8,13 @@ const AlertNavigation = () => {
 
   return (
     <div className="alert-navigation">
-      <Link 
+      <NavLink 
         to="/alert" 
         className={`nav-link ${location.pathname === '/alert' ? 'active' : ''}`}
       >
-        <WiThunderstorm />
-        <span>Weather & Seismic</span>
-      </Link>
-      <Link 
-        to="/air-quality" 
-        className={`nav-link ${location.pathname === '/air-quality' ? 'active' : ''}`}
-      >
-        <WiDust />
-        <span>Air Quality</span>
-      </Link>
+        <FaExclamationTriangle />
+        <span>Alerts</span>
+      </NavLink>
     </div>
   );
 };

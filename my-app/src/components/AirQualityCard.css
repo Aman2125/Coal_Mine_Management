@@ -1,0 +1,158 @@
+.air-quality-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 1.5rem;
+  color: white;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.header-icon {
+  font-size: 2rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.header-title h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.timestamp {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.aqi-status {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.aqi-icon {
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.aqi-text {
+  font-size: 1.1rem;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.metric-item {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.metric-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+}
+
+.metric-label svg {
+  font-size: 1.1rem;
+}
+
+.metric-value {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.primary-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.secondary-value {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.region-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.region-icon {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.air-quality-card.loading,
+.air-quality-card.error {
+  text-align: center;
+  padding: 2rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Hover effects */
+.metric-item:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .air-quality-card {
+    padding: 1rem;
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 1rem;
+  }
+
+  .header-title h2 {
+    font-size: 1.25rem;
+  }
+
+  .aqi-text {
+    font-size: 1rem;
+  }
+
+  .primary-value {
+    font-size: 1.25rem;
+  }
+}
