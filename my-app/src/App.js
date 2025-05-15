@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
-import { useState } from 'react';
 import Calendar from './pages/Calendar';
 import DateDetails from './pages/DateDetails';
 import Guideline1Page from './pages/Guideline1Page';
@@ -15,7 +14,6 @@ import ComplianceStatusPage from './pages/ComplianceStatusPage';
 import DGMSGuidelinesPage from './pages/DGMSGuidelinesPage';
 import TrackComplaintPage from './pages/TrackComplaintPage';
 import HomePage from './pages/HomePage';
-import DigitalDocuments from './pages/DigitalDocuments';
 
 // Page Components
 import FrontPage from './pages/FrontPage';
@@ -31,7 +29,14 @@ import NewRegistrationPage from './pages/NewRegistrationPage';
 import ClaimReportPage from './pages/ClaimReportPage';
 import FAQ from './pages/FAQ.js';
 import ProfilePage from './pages/ProfilePage.js';
-import FrontPageLogOut from './pages/FrontPageLogOut';
+
+// Import FrontPageLogOut, AdminDashboard, and ManageUsers components
+import FrontPageLogOut from './pages/FrontPageLogOut'; 
+import AdminDashboard from './pages/AdminDashboard'; 
+import ManageUsers from './pages/ManageUsers'; // Import ManageUsers
+
+// Import AttendanceLeave Component
+import AttendanceLeave from './pages/AttendanceLeave'; // Added AttendanceLeave path
 
 function App() {
   const [dateDetails, setDateDetails] = useState({});
@@ -43,7 +48,7 @@ function App() {
 
   const handleSaveDetails = (date, updatedDetails) => {
     setDateDetails({ ...dateDetails, [date]: updatedDetails });
-    setSelectedDate(null);
+    setSelectedDate(null); // Close the modal after saving
   };
 
   const handleClose = () => {
@@ -78,7 +83,6 @@ function App() {
         <Route path="/MachineryMaintenance" element={<MachineryMaintenance />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/new-registration" element={<NewRegistrationPage />} />
-        <Route path="/digital-documents" element={<DigitalDocuments />} />
 
         {/* Newly added routes */}
         <Route path="/leave-application" element={<LeaveApplicationForm />} />
@@ -93,7 +97,18 @@ function App() {
         <Route path="/guideline2" element={<Guideline2Page />} />
         <Route path="/guideline3" element={<Guideline3Page />} />
         <Route path="/profile-page" element={<ProfilePage />} />
+
+        {/* Attendance & Leave Route */}
+        <Route path="/attendance-leave" element={<AttendanceLeave />} /> {/* Added AttendanceLeave route */}
+
+        {/* FrontPageLogOut Route */}
         <Route path="/frontpage-logout" element={<FrontPageLogOut />} />
+
+        {/* Admin Dashboard Route */}
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+
+        {/* Manage Users Route (Admin only) */}
+        <Route path="/manage-users" element={<ManageUsers />} /> {/* Added Manage Users Route */}
       </Routes>
 
       {/* Render DateDetails modal if a date is selected */}

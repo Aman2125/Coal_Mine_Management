@@ -1,16 +1,18 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
-import axios from 'axios';
-import './LoginPage.css';
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import "./LoginPage.css";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    employeeId: "", // Changed from email to employeeId
+    password: "",
   });
 
-  const [errorMessage, setErrorMessage] = useState('');
-  const navigate = useNavigate(); // Initialize navigate for redirection
+  const [role, setRole] = useState("Worker"); // Default role
+  const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -18,74 +20,72 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setMessage("");
+
+    if (!formData.employeeId || !formData.password) {
+      setMessage("⚠️ Both Employee ID and password are required.");
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
-      const response = await axios.post('http://localhost:9002/api/login', formData); // Change to your backend login endpoint
+      const response = await axios.post("http://localhost:9002/api/login", formData);
       
-      console.log(response.data); // Debugging: check response from backend
+      // ✅ Store token & role in localStorage
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("userRole", response.data.role);
 
-      if (response.status === 200) {
-        // Assume the response contains a token or user information on successful login
-        const { token, user } = response.data;
+      setRole(response.data.role); // Get user role from response
 
-        // Save token in localStorage or sessionStorage for authentication management
-        localStorage.setItem('authToken', token);
-        localStorage.setItem('user', JSON.stringify(user));
+      setMessage("✅ Login Successful! Redirecting...");
 
-        // Redirect to FrontPageLogOut.js after successful login
-        navigate('/frontpage-logout'); // Redirect to the FrontPageLogOut route
-      } else {
-        console.log("Unexpected response status:", response.status);
-        setErrorMessage("Invalid response from server.");
-      }
+      setTimeout(() => {
+        if (response.data.role === "Admin") {
+          navigate("/admin-dashboard");
+        } else {
+          navigate("/frontpage-logout");
+        }
+      }, 2000);
     } catch (error) {
-      setErrorMessage("Invalid credentials or server error.");
+      if (error.response && error.response.status === 401) {
+        setMessage("❌ Invalid credentials. Please try again.");
+      } else {
+        setMessage("❌ Server error. Please check your connection.");
+      }
       console.error("Login error:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="background-container">
-      <div className="login-container">
-        {/* Government Branding */}
-        <div className="branding">
-          <div className="branding-header">
-            <img src="satyamev.jpg" alt="Ashoka Emblem" className="ashoka-logo" />
-            <h2>Government of India</h2>
-          </div>
-          <h3>MINISTRY OF COAL</h3>
-        </div>
+    <div className="login-container">
+      <h2>Login</h2>
+      <form onSubmit={handleSubmit}>
+        <label>Employee ID:</label> {/* Changed from Email to Employee ID */}
+        <input
+          type="text"
+          name="employeeId"
+          value={formData.employeeId}
+          onChange={handleChange}
+          required
+        />
 
-        {/* Login Form */}
-        <form className="login-form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Email:</label>
-            <input 
-              type="email" 
-              name="email" 
-              value={formData.email} 
-              onChange={handleChange} 
-              required 
-            />
-          </div>
-          <div className="form-group">
-            <label>Password:</label>
-            <input 
-              type="password" 
-              name="password" 
-              value={formData.password} 
-              onChange={handleChange} 
-              required 
-            />
-          </div>
-          {errorMessage && <p className="error">{errorMessage}</p>}
-          <button type="submit" className="btn">Login</button>
-        </form>
+        <label>Password:</label>
+        <input
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+        />
 
-        {/* Registration Link */}
-        <p className="signup-text">
-          Don't have an account? <Link to="/new-registration">New Registration</Link>
-        </p>
-      </div>
+        <button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Logging in..." : "Login"}
+        </button>
+      </form>
+      {message && <p className="message">{message}</p>}
     </div>
   );
 };
